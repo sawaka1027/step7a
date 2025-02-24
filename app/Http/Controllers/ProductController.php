@@ -10,13 +10,15 @@ use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
-    public function getList()
+    public function getList(Request $request)
     {
         $model = new Product();
-        $products = $model->getList();
-
-        return view('index', ['products' => $products]);
+        $products = $model->getList($request->search,$request->company_id);
+        $model = new Company();
+        $companies = $model->getComList();
+        return view('index', ['products' => $products],['companies' => $companies]);
     }
+ 
     public function show($id)
     {
         $model = new Product();
@@ -54,9 +56,16 @@ class ProductController extends Controller
     public function store(PruductRequest $request)
     {
         DB::beginTransaction();
+        $image_path=null;
         try {
+            if($request->hasFile('img_path')){ 
+                $image = $request->file('img_path');
+                $filename=$image->getClientOriginalName();
+                $image -> storeAs('public/images', $filename);
+                $image_path = 'storage/images/' . $filename;
+            }
             $model = new Product();
-            $model->registProduct($request);
+            $model->registProduct($request,$image_path);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -64,12 +73,20 @@ class ProductController extends Controller
         }
         return redirect(route('index'));
     }
+
     public function update($id,PruductRequest $request)
     {
         DB::beginTransaction();
+        $image_path=null;
         try {
+            if($request->hasFile('img_path')){ 
+                $image = $request->file('img_path');
+                $filename=$image->getClientOriginalName();
+                $image -> storeAs('public/images', $filename);
+                $image_path = 'storage/images/' . $filename;
+            }
             $model = new Product();
-            $model->updateProduct($id,$request);
+            $model->updateProduct($id,$request,$image_path);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -77,4 +94,5 @@ class ProductController extends Controller
         }
         return redirect(route('edit',$id));
     }
+
 }

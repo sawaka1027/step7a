@@ -50,7 +50,7 @@
             <input id="img_path" type="file" name="img_path" class="form-control">
         </div>
         <div class="form-group">
-        <button type="submit" class="btn btn-primary">登録</button>
+        <button type="submit" class="btn btn-primary">新規登録</button>
         <a href="{{ route('index') }}" class="btn btn-secondary">戻る</a>
         </div>
     </form>
