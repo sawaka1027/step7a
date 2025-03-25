@@ -1,23 +1,50 @@
 @extends('layouts.app')
+@section('scripts')
+$(document).ready(function () {
+    $('#product-form').on('submit', function (event) {
+        event.preventDefault();
 
+        let formData = $(this).serialize();
+
+        $.ajax({
+            url: '/index',
+            type: 'GET',
+            data: formData,
+            success: function (response) {
+                $('#response-message').text(response.message);
+            },
+            error: function (xhr) {
+                $('#response-message').text('エラーが発生しました。');
+            }
+        });
+    });
+});
+@endsection
 @section('content')
 <div class="container">
     <h1 class="mb-4">商品情報一覧</h1>
     <div class="products mt-5">
-    <form action="{{ route('index') }}" method="GET">
-        <input type="text" name="search" value="{{ request('search') }}" placeholder="検索キーワード" >
-        <select class="form-select-sm" id="company_id" name="company_id">
-            <option value="" selected>メーカー名</option>
-            @foreach($companies as $company)
-                <option value="{{ $company->id }}">{{ $company->company_name }}</option>
-            @endforeach 
-        </select>
-        <button type="submit" class="btn btn-info btn-sm mx-1">検索</button>
-    </form>
-    </div>
+        <form action="{{ route('index') }}" method="GET">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="検索キーワード" >
+            <select class="form-select-sm" id="company_id" name="company_id">
+                <option value="" selected>メーカー名</option>
+                @foreach($companies as $company)
+                    <option value="{{ $company->id }}">{{ $company->company_name }}</option>
+                @endforeach 
+            </select>
+            <input type="number" name="min_price" placeholder="最小価格" value="{{ request('min_price') }}">
+            <input type="number" name="max_price" placeholder="最大価格" value="{{ request('max_price') }}">
+            <input type="number" name="min_stock" placeholder="最小在庫" value="{{ request('min_stock') }}">
+            <input type="number" name="max_stock" placeholder="最大在庫" value="{{ request('max_stock') }}">
+            <button type="submit" class="btn btn-info btn-sm mx-1">検索</button>
+        </form>
+        </div>
+        <!-- 検索条件をリセットするためのリンクボタン -->
+        <a href="{{ route('index') }}" class="btn btn-success mt-3">検索条件を元に戻す</a>
+    
     <div class="products mt-5">
         <h2>商品情報</h2>
-        <table class="table table-striped">
+        <table id="myTable" class="tablesorter">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -51,5 +78,10 @@
         </table>
     </div>   
 </div>
+<script>
+    $(document).ready(function() {
+        $("#myTable").tablesorter();
+    });
+    </script>
 @endsection
 

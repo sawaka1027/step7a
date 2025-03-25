@@ -13,7 +13,7 @@ class ProductController extends Controller
     public function getList(Request $request)
     {
         $model = new Product();
-        $products = $model->getList($request->search,$request->company_id);
+        $products = $model->getList($request);
         $model = new Company();
         $companies = $model->getComList();
         return view('index', ['products' => $products],['companies' => $companies]);
