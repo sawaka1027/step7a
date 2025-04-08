@@ -80,13 +80,14 @@
         <main class="py-4">
             @yield('content')
         </main>
-    </div>    
+    </div>
     <script>
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
+    $.ajaxSetup({
+        headers: {
+            // 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        }
+    });
     </script>
 </body>
 </html>

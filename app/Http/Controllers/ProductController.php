@@ -16,7 +16,13 @@ class ProductController extends Controller
         $products = $model->getList($request);
         $model = new Company();
         $companies = $model->getComList();
-        return view('index', ['products' => $products],['companies' => $companies]);
+        if ($request->ajax()) {
+            return response()->json($products);
+        }
+        return view('index', [
+            'products' => $products,
+            'companies' => $companies,
+        ]);
     }
  
     public function show($id)
@@ -41,9 +47,10 @@ class ProductController extends Controller
             $model = new Product();
             $model->delProduct($id);
             DB::commit();
+            return response()->json(['message' => '削除が成功しました！'], 200);
         } catch (\Exception $e) {
             DB::rollBack();
-            return back();
+            return response()->json(['message' => '削除処理に失敗しました: ' . $e->getMessage()], 500);
         }
         return redirect('index');
     }

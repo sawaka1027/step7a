@@ -33,7 +33,7 @@ class Product extends Model
             $products->where('stock', '<=', $request->max_stock);
         }
         $products = $products->get();
-
+ 
         return $products;
     }
 
